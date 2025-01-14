@@ -65,62 +65,63 @@ from matplotlib import pyplot as plt
 # plt.show()
 
 #third task
-# samples = []
-# targets = []
-# reader = open('samples_third_task.txt')
-#
-# for line in reader.readlines():
-#     splitted = [float(a) for a in line.split(' ')]
-#     if splitted[0] == 1:
-#         targets.append([splitted[0]])
-#     else:
-#         targets.append([0.0])
-#     samples.append(splitted[1:])
-#
-# perceptron = Perceptron(2, [1])
-# perceptron.train(samples, targets, 300, 1)
-#
-# mistakes = 0
-# for i in range(len(samples)):
-#     v = perceptron.process(samples[i])[0]
-#     if v < 0.5:
-#         mistakes += (0.0 - targets[i][0])**2
-#     else:
-#         mistakes += (1.0 - targets[i][0])**2
-# mistakes /= 10000
-# print('Accuracy:', 1 - mistakes)
-#
-# print()
-# layers = perceptron.layers
-# for l in layers:
-#     for i in l:
-#         print(i.get_weights())
-#     print()
-#
-# #lets plot the results
-# px = []
-# py = []
-# nx = []
-# ny = []
-# for i in range(len(samples)):
-#     if targets[i][0] == 1.0:
-#         px.append(samples[i][0])
-#         py.append(samples[i][1])
-#     else:
-#         nx.append(samples[i][0])
-#         ny.append(samples[i][1])
-#
-# x = np.linspace(-10, 10, 1000)
-# y = np.array([(-68*t + 0.38)/34 for t in x])
-#
-# plt.scatter(px, py, color='green')
-# plt.scatter(nx, ny, color='red')
-# plt.plot(x, y, color='black')
-# plt.show()
+samples = []
+targets = []
+reader = open('samples_third_task.txt')
+
+for line in reader.readlines():
+    splitted = [float(a) for a in line.split(' ')]
+    if splitted[0] == 1:
+        targets.append([splitted[0]])
+    else:
+        targets.append([0.0])
+    samples.append(splitted[1:])
+
+perceptron = Perceptron(2, [1])
+perceptron.train(samples, targets, 900, 1)
+
+mistakes = 0
+for i in range(len(samples)):
+    v = perceptron.process(samples[i])[0]
+    if v < 0.5:
+        mistakes += (0.0 - targets[i][0])**2
+    else:
+        mistakes += (1.0 - targets[i][0])**2
+mistakes /= 10000
+print('Accuracy:', 1 - mistakes)
+
+print()
+layers = perceptron.layers
+weights = layers[0][0].get_weights()
+for l in layers:
+    for i in l:
+        print(i.get_weights())
+    print()
+
+#lets plot the results
+px = []
+py = []
+nx = []
+ny = []
+for i in range(len(samples)):
+    if targets[i][0] == 1.0:
+        px.append(samples[i][0])
+        py.append(samples[i][1])
+    else:
+        nx.append(samples[i][0])
+        ny.append(samples[i][1])
+
+x = np.linspace(-10, 10, 1000)
+y = np.array([(-t*weights[0] - weights[2])/weights[1] for t in x])
+
+plt.scatter(px, py, color='green')
+plt.scatter(nx, ny, color='red')
+plt.plot(x, y, color='black')
+plt.show()
 
 #first task guess the coef style
 # samples = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
-# targets = [0, 0, 0, 1, 0, 1, 0, 1]
+# targets = [0, 0, 1, 1, 1, 0, 0, 0]
 # min = [-1.0, -1.0, -1.0, -1.0]
 # max = [1.0, 1.0, 1.0, 1.0]
 # step = [0.5, 0.5, 0.5, 0.5]

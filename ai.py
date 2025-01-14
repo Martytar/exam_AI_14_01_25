@@ -183,7 +183,7 @@ def neuron_math(samples, targets, min, max, step):
         def process(self, inputs):
             s = np.matmul(self.weights[:-1], inputs) + self.weights[-1]
 
-            if s <= 0: return 0
+            if s < 0: return 0
             else: return 1
 
         def set_weight(self, index, weight):
