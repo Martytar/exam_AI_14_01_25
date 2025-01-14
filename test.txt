@@ -1,0 +1,104 @@
+import numpy as np
+
+class Perceptron:
+
+    def __init__(self, input_dim, layer_dims):
+        self.layers = []
+
+        dims = np.concatenate(([input_dim], layer_dims))
+        for i in range(1, len(dims)):
+            layer = []
+            for j in range(dims[i]):
+                layer.append(self.Neuron(np.ones(dims[i-1])))
+            self.layers.append(layer)
+
+    def process(self, inputs):
+        values = inputs
+        for layer in self.layers:
+            results = []
+            for neuron in layer:
+                results.append(neuron.process(values))
+            values = results
+
+        return values
+
+    # private method for getting intermediate states of perceptron
+    def __process_for_train(self, inputs):
+        values = inputs
+        interstates = [inputs]
+        for layer in self.layers:
+            interstate = []
+            for neuron in layer:
+                interstate.append(neuron.process(values))
+            interstates.append(interstate)
+            values = interstate
+
+        return interstates
+
+    def train(self, samples, targets, epochs, education_speed):
+        for epoch in range(epochs):
+            for s in range(len(samples)):
+
+                #we start with reverse move
+                sample = samples[s]
+                target = targets[s]
+                states = self.__process_for_train(sample)
+
+                mistakes = []
+
+                mistake = [] ##generate mistakes on the output layer
+                state = states[-1]
+                for i in range(len(state)):
+                    mistake.append(state[i]*(1-state[i])*(target[i] - state[i]))
+                mistakes.append(mistake)
+
+                for i in range(len(states)-2, 0, -1):
+
+                    state = states[i]
+                    mistake = []
+
+                    for j in range(len(state)):
+                        m = 0
+                        for w in range(len(mistakes[0])):
+                            m += mistakes[0][w]*self.layers[i][w].get_weight(j)
+                        mistake.append(state[j]*(1-state[j])*m)
+
+                    mistakes.insert(0, mistake)
+
+                ##now lets correct our weights with straight move
+                for i in range(0, len(states)-1):
+                    mistake = mistakes[i]
+                    for j in range(len(mistake)):
+                        weights = self.layers[i][j].get_weights()
+                        for k in range(len(weights)):
+                            weights[k] += education_speed*mistake[j]*states[i][k]
+                        self.layers[i][j].set_weights(weights)
+
+
+
+
+
+    class Neuron:
+        def __init__(self, weights):
+            self.weights = weights
+
+        def process(self, inputs):
+            s = np.matmul(self.weights, inputs)
+
+            return 1.0/(1 + np.e**(-1*s))
+
+        def set_weight(self, index, weight):
+            self.weights[index] = weight
+
+        def set_weights(self, weights):
+            self.weights = weights
+
+        def increment_weight(self, index, increment):
+            self.weights[index] += increment
+
+        def get_weight(self, index):
+            return self.weights[index]
+
+        def get_weights(self):
+            return self.weights
+
